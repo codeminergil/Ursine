@@ -64,13 +64,13 @@ namespace Ursine
 
             TextureLoader textureLoader = new TextureLoader();
             TextureList = textureLoader.InitialiseTextures(Content);//loads map textures
-            
+            map.PlotMap(TextureList);
             player.goalCord = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
             player.IsoCord = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
             this.IsMouseVisible = true;
 
             mapGrid = new MapGrid(40, 40);
-            mapGrid.ClearGrid();
+           // mapGrid.ClearGrid(map.TerArray);
             
             base.Initialize();
         }
@@ -158,7 +158,7 @@ namespace Ursine
                 //   mapGrid.MapArray[(int)targCart.X/100, (int)targCart.Y/100] = 1;
                 targIso = mousePos;
                 //mapGrid.PlayerAStarArray[(int)targCart.X, (int)targCart.Y] = 0;
-                mapGrid.ClearGrid();
+                mapGrid.ClearGrid(map.TerArray);
                 mapGrid.PlotAStar((int)targCart.X, (int)targCart.Y, 5, 5);    //pass player later
             }
 
@@ -212,16 +212,20 @@ namespace Ursine
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             map.PlotMap(TextureList);
-            foreach (var tile in map.MapTerrainList) 
+            // foreach (var tile in map.MapTerrainList) 
+            for (int x = 0; x < map.TerArray.GetLength(0); x++)
             {
-                spriteBatch.DrawString(font, tile.X.ToString()+","+tile.Y.ToString(), g.Cart2Iso(tile.X * tile.Height, tile.Y * tile.Height), Color.Black);
+                for (int y = 0; y < map.TerArray.GetLength(1); y++)
+                {
 
-                spriteBatch.Draw(
-                        tile.Texture,
-                        g.Cart2Iso((tile.X*tile.Height) - (scrollX + scrollY), (tile.Y * tile.Height) - (scrollY - scrollX)),
-                        Color.White
-                        );
+                    spriteBatch.DrawString(font, map.TerArray[x,y].X.ToString() + "," + map.TerArray[x, y].Y.ToString(), g.Cart2Iso(map.TerArray[x, y].X * map.TerArray[x, y].Height, map.TerArray[x, y].Y * map.TerArray[x, y].Height), Color.Black);
 
+                    spriteBatch.Draw(
+                            map.TerArray[x, y].Texture,
+                            g.Cart2Iso((map.TerArray[x, y].X * map.TerArray[x, y].Height) - (scrollX + scrollY), (map.TerArray[x, y].Y * map.TerArray[x, y].Height) - (scrollY - scrollX)),
+                            Color.White
+                            );
+                }
             }
 
             Vector2 cursVector = g.Cart2Iso((float)System.Math.Round(targCart.X), (float)System.Math.Round(targCart.Y));

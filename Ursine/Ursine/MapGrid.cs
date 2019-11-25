@@ -24,15 +24,16 @@
             PlayerAStarArray = new int[x, y];
         }
 
-        public void ClearGrid()
+        public void ClearGrid(Terrain[,] t)
         {
             for (int x = 0; x < MapArray.GetLength(0); x++)
             {
                 for (int y = 0; y < MapArray.GetLength(1); y++)
                 {
-                    MapArray[x, y] = 0;
+                    MapArray[x, y] = t[x, y].PassCost;
                     CandArray[x, y] = 0;
-                    PlayerAStarArray[x, y] = 0;
+                    PlayerAStarArray[x, y] = t[x, y].PassCost;
+
                 }
             }
 
@@ -75,6 +76,7 @@
                             && (xx + x) >= 0
                             && (yy + y) < CandArray.GetLength(1)
                             && (yy + y) >= 0
+                            && (PlayerAStarArray[xx+x, yy+y] != 999)
                             )
                         {
                             if (CandArray[xx + x, yy + y] == 0)
