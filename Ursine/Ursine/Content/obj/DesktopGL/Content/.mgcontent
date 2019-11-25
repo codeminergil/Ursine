@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Users/User/source/repos/Ursine/Ursine/Content/ball.png</File>
+    <File>C:/Users/User/source/repos/Ursine/Ursine/Content/Fonts/File.spritefont</File>
+    <File>C:/Users/User/source/repos/Ursine/Ursine/Content/grassTile.png</File>
+    <File>C:/Users/User/source/repos/Ursine/Ursine/Content/tile.png</File>
+    <File>C:/Users/User/source/repos/Ursine/Ursine/Content/tile2.png</File>
+    <File>C:/Users/User/source/repos/Ursine/Ursine/Content/TileHighlight.png</File>
+    <File>C:/Users/User/source/repos/Ursine/Ursine/Content/tileRIverBankLeft.png</File>
+    <File>C:/Users/User/source/repos/Ursine/Ursine/Content/tileRIverBankRight.png</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File>Fonts/Cords.spritefont</File>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>

@@ -1,0 +1,3 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/User/source/repos/Ursine/Ursine/Content/ball.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/ball.xnb","TextureProcessor","Texture2DContent",8368,16469,0.1609087
+"C:/Users/User/source/repos/Ursine/Ursine/Content/tile.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/tile.xnb","TextureProcessor","Texture2DContent",28988,80085,0.0099929

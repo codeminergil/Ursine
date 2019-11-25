@@ -1,0 +1,9 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/User/source/repos/Ursine/Ursine/Content/ball.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/Content/ball.xnb","TextureProcessor","Texture2DContent",23486,80085,0.1669038
+"C:/Users/User/source/repos/Ursine/Ursine/Content/Fonts/File.spritefont","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/Content/Fonts/Cords.xnb","FontDescriptionProcessor","SpriteFontContent",2008,21521,1.681736
+"C:/Users/User/source/repos/Ursine/Ursine/Content/grassTile.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/Content/grassTile.xnb","TextureProcessor","Texture2DContent",8032,20085,0.1469159
+"C:/Users/User/source/repos/Ursine/Ursine/Content/tile.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/Content/tile.xnb","TextureProcessor","Texture2DContent",7953,20085,0.1620391
+"C:/Users/User/source/repos/Ursine/Ursine/Content/tile2.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/Content/tile2.xnb","TextureProcessor","Texture2DContent",7598,20085,0.0050178
+"C:/Users/User/source/repos/Ursine/Ursine/Content/TileHighlight.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/Content/TileHighlight.xnb","TextureProcessor","Texture2DContent",579,20085,0.0060024
+"C:/Users/User/source/repos/Ursine/Ursine/Content/tileRIverBankLeft.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/Content/tileRIverBankLeft.xnb","TextureProcessor","Texture2DContent",9626,20085,0.0089741
+"C:/Users/User/source/repos/Ursine/Ursine/Content/tileRIverBankRight.png","C:/Users/User/source/repos/Ursine/Ursine/Content/bin/DesktopGL/Content/tileRIverBankRight.xnb","TextureProcessor","Texture2DContent",9551,20085,0.0059978
