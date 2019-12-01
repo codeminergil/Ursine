@@ -55,22 +55,21 @@ namespace Ursine
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
             graphics.IsFullScreen = false;
             graphics.ApplyChanges();
+            TextureLoader textureLoader = new TextureLoader();
+            TextureList = textureLoader.InitialiseTextures(Content);//loads map textures
             map = new MapReader("Ursine.Resources.testMap.txt");
+            map.PlotMap(TextureList);
             scrollX = 0;
             scrollY = 0;
-            //ballPosition = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
             mapPosition = new Vector2(0, 0);
             ballSpeed = 150f;
 
-            TextureLoader textureLoader = new TextureLoader();
-            TextureList = textureLoader.InitialiseTextures(Content);//loads map textures
-            map.PlotMap(TextureList);
             player.goalCord = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
             player.IsoCord = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
             this.IsMouseVisible = true;
 
             mapGrid = new MapGrid(40, 40);
-           // mapGrid.ClearGrid(map.TerArray);
+            mapGrid.ClearGrid(map.TerArray);
             
             base.Initialize();
         }

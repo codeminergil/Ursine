@@ -8,8 +8,10 @@ namespace Ursine
         {
         }
 
-        public Terrain(int x, int y, int z, Texture2D t, int width, int height, bool passable, int PassCost) : base(x, y, z, t, width, height)
+        public Terrain(int x, int y, int z, Texture2D t, int width, int height, bool passable, int passCost) : base(x, y, z, t, width, height)
         {
+            Passable = passable;
+            PassCost = passCost;
         }
 
         public bool Passable { get; set; }

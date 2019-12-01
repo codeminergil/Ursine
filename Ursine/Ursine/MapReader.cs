@@ -45,7 +45,7 @@ namespace Ursine
                 result = reader.ReadToEnd();
             }
 
-            //string[,] item = new string[40, 40];
+            string[,] item = new string[40, 40];
             string[] line = result.Split(new[] { "\r\n", "\r", "\n" },
                                                 StringSplitOptions.None
                                             );

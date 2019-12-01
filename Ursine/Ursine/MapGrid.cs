@@ -30,6 +30,7 @@
             {
                 for (int y = 0; y < MapArray.GetLength(1); y++)
                 {
+                    int tt = t[x, y].PassCost;
                     MapArray[x, y] = t[x, y].PassCost;
                     CandArray[x, y] = 0;
                     PlayerAStarArray[x, y] = t[x, y].PassCost;
