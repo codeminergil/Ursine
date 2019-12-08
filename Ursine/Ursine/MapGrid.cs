@@ -17,6 +17,8 @@
 
         public int[,] PlayerAStarArray { get; set; }
 
+       // public List<int> LocalCells { get; set; }
+
         public MapGrid(int x, int y)
         {
             MapArray = new int[x, y];
@@ -33,6 +35,7 @@
                     int tt = t[x, y].PassCost;
                     MapArray[x, y] = t[x, y].PassCost;
                     CandArray[x, y] = 0;
+                    if (t[x, y].PassCost == 99) { CandArray[x, y] = 1; }
                     PlayerAStarArray[x, y] = t[x, y].PassCost;
 
                 }
@@ -42,11 +45,15 @@
 
         public void PlotAStar(int x, int y, int playerX, int playerY)
         {
-            PlayerAStarArray[x, y] = 0;
-            CandArray[x, y] = 0;
+            if (PlayerAStarArray[x, y] != 99)
+            {
+                PlayerAStarArray[x, y] = 99;
+                CandArray[x, y] = 1;
+            }
+            
 
-            PlayerAStarArray[playerX, playerY] = 999;
-            CandArray[playerX, playerY] = 999;
+            PlayerAStarArray[playerX, playerY] = 888;
+            //CandArray[playerX, playerY] = 99;
             
             int currentX = x;
             int currentY = y;
@@ -54,14 +61,15 @@
 
             int XWeighting = 0;
             int YWeighting = 0;
-
             //Use CAndArray to loop through Astar Array until player is hit
-            //call a function to lad the terrain into these array a 999
+            //call a function to lad the terrain into these array a 99
 
             while (CandArray[playerX, playerY] != 1)
             {
                 XWeighting = 0;
                 YWeighting = 0;
+
+                //LocalArray[1, 1] = 999;
 
                 if (x < playerX) { XWeighting = +1; }  //heuristic direction to be headed in
                 if (x > playerX) { XWeighting = -1; }
@@ -73,45 +81,32 @@
                 {
                     for (int yy = -1; yy <= 1; yy++)
                     {
+
                         if ((xx + x) < CandArray.GetLength(0)
                             && (xx + x) >= 0
                             && (yy + y) < CandArray.GetLength(1)
                             && (yy + y) >= 0
-                            && (PlayerAStarArray[xx+x, yy+y] != 999)
+                            && (PlayerAStarArray[xx+x, yy+y] != 99)
                             )
                         {
                             if (CandArray[xx + x, yy + y] == 0)
                             {
                                 CandArray[xx + x, yy + y] = 1;
-                                PlayerAStarArray[xx + x, yy + y] = iterationCount;
+                                PlayerAStarArray[xx + x, yy + y] = /*iterationCount +*/ CalcHeur(playerX, playerY, xx + x, yy + y);
+                               // LocalArray[1 + xx, 1 + yy] = 1;
+
                             }
                         }
                     }
 
 
-                    //for (int pxx = -1; pxx <= 1; pxx++) //loop around a single cell
-                    //{
-                    //    for (int pyy = -1; pyy <= 1; pyy++)
-                    //    {
-                    //        if ((pxx + x) < CandArray.GetLength(0)
-                    //            && (pxx + x) >= 0
-                    //            && (pyy + y) < CandArray.GetLength(1)
-                    //            && (pyy + y) >= 0
-                    //            )
-                    //        {
-                    //            if (CandArray[pxx + x, pyy + y] == 1)
-                    //            {
-                    //                PlayerAStarArray[pxx + x, pyy + y] = iterationCount;
-                    //                CandArray[pxx + x, pyy + y] = 2;
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
                 }
                 iterationCount++;
                 x += XWeighting;    //start looking in the heuristically right direction
                 y += YWeighting;
+                
+
+
 
                 if (iterationCount > 50)
                 { break; }
@@ -119,6 +114,12 @@
             }
 
     
+        }
+
+        public int CalcHeur(int px, int py, int gx, int gy)
+        {
+            // return (int)Math.Pow(Math.Abs(gx - px), 2) + (int)Math.Pow(Math.Abs(gy - py), 2);
+            return (int)(Math.Pow(Math.Abs(gx - px),2) + Math.Pow(Math.Abs(gy - py),2));
         }
     }
 }

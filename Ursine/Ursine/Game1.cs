@@ -158,7 +158,7 @@ namespace Ursine
                 targIso = mousePos;
                 //mapGrid.PlayerAStarArray[(int)targCart.X, (int)targCart.Y] = 0;
                 mapGrid.ClearGrid(map.TerArray);
-                mapGrid.PlotAStar((int)targCart.X, (int)targCart.Y, 5, 5);    //pass player later
+                mapGrid.PlotAStar((int)targCart.X, (int)targCart.Y, 7, 0);    //pass player later
             }
 
             if (/*ballPosition.X/100*/ player.IsoCord.X< targIso.X)
