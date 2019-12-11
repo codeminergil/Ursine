@@ -17,7 +17,7 @@
 
         public int[,] PlayerAStarArray { get; set; }
 
-       // public List<int> LocalCells { get; set; }
+        public int[,] LocalArray { get; set; }
 
         public MapGrid(int x, int y)
         {
@@ -35,26 +35,30 @@
                     int tt = t[x, y].PassCost;
                     MapArray[x, y] = t[x, y].PassCost;
                     CandArray[x, y] = 0;
-                    if (t[x, y].PassCost == 99) { CandArray[x, y] = 1; }
+                    if (t[x, y].PassCost == 999) { CandArray[x, y] = 1; }
                     PlayerAStarArray[x, y] = t[x, y].PassCost;
 
                 }
             }
 
+            LocalArray = new int[,] {{ 999, 999, 999 },{ 999,999,999 },{ 999,999,999 } };
+
         }
 
         public void PlotAStar(int x, int y, int playerX, int playerY)
         {
-            if (PlayerAStarArray[x, y] != 99)
+            if (PlayerAStarArray[x, y] != 999)
             {
-                PlayerAStarArray[x, y] = 99;
+                PlayerAStarArray[x, y] = 999;
                 CandArray[x, y] = 1;
             }
             
 
             PlayerAStarArray[playerX, playerY] = 888;
-            //CandArray[playerX, playerY] = 99;
-            
+            CandArray[playerX, playerY] = 999;
+
+            int lowVal = 0;
+            int prevLowVal = 0;
             int currentX = x;
             int currentY = y;
             int iterationCount = 1;
@@ -66,16 +70,10 @@
 
             while (CandArray[playerX, playerY] != 1)
             {
-                XWeighting = 0;
-                YWeighting = 0;
+                //XWeighting = 0;
+                //YWeighting = 0;
 
                 //LocalArray[1, 1] = 999;
-
-                if (x < playerX) { XWeighting = +1; }  //heuristic direction to be headed in
-                if (x > playerX) { XWeighting = -1; }
-
-                if (y < playerY) { YWeighting = +1; }
-                if (y > playerY) { YWeighting = -1; }
 
                 for (int xx = -1; xx <= 1; xx++) //loop around a single cell
                 {
@@ -86,22 +84,52 @@
                             && (xx + x) >= 0
                             && (yy + y) < CandArray.GetLength(1)
                             && (yy + y) >= 0
-                            && (PlayerAStarArray[xx+x, yy+y] != 99)
+                            && (PlayerAStarArray[xx+x, yy+y] != 999)
                             )
                         {
                             if (CandArray[xx + x, yy + y] == 0)
                             {
                                 CandArray[xx + x, yy + y] = 1;
-                                PlayerAStarArray[xx + x, yy + y] = /*iterationCount +*/ CalcHeur(playerX, playerY, xx + x, yy + y);
-                               // LocalArray[1 + xx, 1 + yy] = 1;
-
+                                PlayerAStarArray[xx + x, yy + y] = iterationCount + CalcHeur(playerX, playerY, xx + x, yy + y);
+                                LocalArray[1 + xx, 1 + yy] = CalcHeur(playerX, playerY, xx + x, yy + y); 
                             }
                         }
                     }
 
-
                 }
                 iterationCount++;
+
+                lowVal = LocalArray[0, 0];
+                for (int p = 0; p < 3; p++)
+                {
+                    for (int q = 0; q < 3; q++)
+                    {
+                        if (LocalArray[p, q] < lowVal && !(p==1 && q ==1))
+                        {
+                            lowVal = LocalArray[p, q];
+                        }
+                    }
+                }
+
+                if (LocalArray[0, 0] == lowVal) { XWeighting = -1; YWeighting = -1; }
+                if (LocalArray[1, 0] == lowVal) { XWeighting = 0; YWeighting = -1; }
+                if (LocalArray[2, 0] == lowVal) { XWeighting = +1; YWeighting = -1; }
+
+                if (LocalArray[0, 1] == lowVal) { XWeighting = -1; YWeighting = 0; }
+                if (LocalArray[2, 1] == lowVal) { XWeighting = +1; YWeighting = 0; }
+
+                if (LocalArray[0, 2] == lowVal) { XWeighting = -1; YWeighting = +1; }
+                if (LocalArray[1, 2] == lowVal) { XWeighting = 0; YWeighting = +1; }
+                if (LocalArray[2, 2] == lowVal) { XWeighting = +1; YWeighting = +1; }
+
+
+                //if (x < playerX) { XWeighting = +1; }  //heuristic direction to be headed in
+                //if (x > playerX) { XWeighting = -1; }
+
+                //if (y < playerY) { YWeighting = +1; }
+                //if (y > playerY) { YWeighting = -1; }
+
+
                 x += XWeighting;    //start looking in the heuristically right direction
                 y += YWeighting;
                 
@@ -118,8 +146,8 @@
 
         public int CalcHeur(int px, int py, int gx, int gy)
         {
-            // return (int)Math.Pow(Math.Abs(gx - px), 2) + (int)Math.Pow(Math.Abs(gy - py), 2);
             return (int)(Math.Pow(Math.Abs(gx - px),2) + Math.Pow(Math.Abs(gy - py),2));
+           // return (int)(Math.Abs(gx - px) + Math.Abs(gy - py));
         }
     }
 }

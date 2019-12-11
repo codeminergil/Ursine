@@ -66,7 +66,7 @@ namespace Ursine
 
                     else if (TerrainMapGrid[x, y] == 2)
                     { ter = new Terrain(x, y, 0, TextureList[1], 100, 50, false, 999);
-                        TerArray[x, y] = new Terrain(x, y, 0, TextureList[1], 100, 50, true, 99);
+                        TerArray[x, y] = new Terrain(x, y, 0, TextureList[1], 100, 50, true, 999);
                     }
 
                     else if (TerrainMapGrid[x, y] == 3)

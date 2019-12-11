@@ -260,7 +260,12 @@ namespace Ursine
                 for (int ax = 0; ax < mapGrid.PlayerAStarArray.GetLength(0); ax++)
                 {
                    //  stringArray += mapGrid.CandArray[ax, ay].ToString() + ",";
-                    stringArray += mapGrid.PlayerAStarArray[ax, ay].ToString() + ",";
+                    if (mapGrid.PlayerAStarArray[ax, ay].ToString().Length ==2)
+                    { stringArray += "0"+mapGrid.PlayerAStarArray[ax, ay].ToString() + ","; }
+                    else if (mapGrid.PlayerAStarArray[ax, ay].ToString().Length ==1)
+                    { stringArray += "00"+mapGrid.PlayerAStarArray[ax, ay].ToString() + ","; }
+                    else
+                    { stringArray += mapGrid.PlayerAStarArray[ax, ay].ToString() + ","; }
                 }
                 stringArray += "\n";
             }
