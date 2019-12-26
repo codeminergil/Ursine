@@ -196,8 +196,6 @@ namespace Ursine
             //    ballPosition.Y -= ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             //}
 
-
-
             base.Update(gameTime);
         }
 
@@ -270,7 +268,9 @@ namespace Ursine
                 stringArray += "\n";
             }
             spriteBatch.DrawString(font, stringArray , new Vector2(1100, 20), Color.Black);
-            
+
+            spriteBatch.DrawString(font, gameTime.TotalGameTime.ToString(), new Vector2(1000, 10), Color.Black);
+
             spriteBatch.End();
 
             base.Draw(gameTime);

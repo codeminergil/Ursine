@@ -49,7 +49,7 @@
         {
             if (PlayerAStarArray[x, y] != 999)
             {
-                PlayerAStarArray[x, y] = 999;
+                PlayerAStarArray[x, y] = 888;
                 CandArray[x, y] = 1;
             }
             
@@ -58,7 +58,8 @@
             CandArray[playerX, playerY] = 999;
 
             int lowVal = 0;
-            int prevLowVal = 0;
+            int breakVal = 0;
+            int prevLowVal = 999;
             int currentX = x;
             int currentY = y;
             int iterationCount = 1;
@@ -100,16 +101,27 @@
                 iterationCount++;
 
                 lowVal = LocalArray[0, 0];
+                breakVal = LocalArray[1, 1];
                 for (int p = 0; p < 3; p++)
                 {
                     for (int q = 0; q < 3; q++)
                     {
-                        if (LocalArray[p, q] < lowVal && !(p==1 && q ==1))
+                        if (LocalArray[p, q] < lowVal 
+                            && !(p==1 && q ==1) 
+                            && LocalArray[p, q] != 999
+                            )
                         {
                             lowVal = LocalArray[p, q];
                         }
                     }
                 }
+
+                if (lowVal == prevLowVal)   //make sure youre not just vibrating
+                {
+                    break;
+                }
+
+                prevLowVal = lowVal;
 
                 if (LocalArray[0, 0] == lowVal) { XWeighting = -1; YWeighting = -1; }
                 if (LocalArray[1, 0] == lowVal) { XWeighting = 0; YWeighting = -1; }
@@ -122,6 +134,11 @@
                 if (LocalArray[1, 2] == lowVal) { XWeighting = 0; YWeighting = +1; }
                 if (LocalArray[2, 2] == lowVal) { XWeighting = +1; YWeighting = +1; }
 
+                if (breakVal == lowVal)
+                {
+                    break;            
+                }
+
 
                 //if (x < playerX) { XWeighting = +1; }  //heuristic direction to be headed in
                 //if (x > playerX) { XWeighting = -1; }
@@ -132,9 +149,9 @@
 
                 x += XWeighting;    //start looking in the heuristically right direction
                 y += YWeighting;
-                
 
-
+                XWeighting = 0;
+                YWeighting = 0;
 
                 if (iterationCount > 50)
                 { break; }
