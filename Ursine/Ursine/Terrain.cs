@@ -16,6 +16,8 @@ namespace Ursine
 
         public bool Passable { get; set; }
         public int PassCost { get; set; }
-
+        public float f { get { return g + h; } }
+        public float g { get; set; }
+        public float h { get; set; }
     }
 }

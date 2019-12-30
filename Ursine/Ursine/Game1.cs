@@ -57,7 +57,7 @@ namespace Ursine
             graphics.ApplyChanges();
             TextureLoader textureLoader = new TextureLoader();
             TextureList = textureLoader.InitialiseTextures(Content);//loads map textures
-            map = new MapReader("Ursine.Resources.testMap.txt");
+            map = new MapReader("Ursine.Resources.testMap2.txt");
             map.PlotMap(TextureList);
             scrollX = 0;
             scrollY = 0;
@@ -70,7 +70,9 @@ namespace Ursine
 
             mapGrid = new MapGrid(40, 40);
             mapGrid.ClearGrid(map.TerArray);
-            
+
+            mapGrid.PlotAStar(7, 0, 7, 0, map.TerArray);
+
             base.Initialize();
         }
 
@@ -158,7 +160,7 @@ namespace Ursine
                 targIso = mousePos;
                 //mapGrid.PlayerAStarArray[(int)targCart.X, (int)targCart.Y] = 0;
                 mapGrid.ClearGrid(map.TerArray);
-                mapGrid.PlotAStar((int)targCart.X, (int)targCart.Y, 7, 0);    //pass player later
+                mapGrid.PlotAStar(7, 0, (int)targCart.X, (int)targCart.Y, map.TerArray);    //pass player later
             }
 
             if (/*ballPosition.X/100*/ player.IsoCord.X< targIso.X)
@@ -257,16 +259,16 @@ namespace Ursine
             {
                 for (int ax = 0; ax < mapGrid.PlayerAStarArray.GetLength(0); ax++)
                 {
-                   //  stringArray += mapGrid.CandArray[ax, ay].ToString() + ",";
-                    if (mapGrid.PlayerAStarArray[ax, ay].ToString().Length ==2)
-                    { stringArray += "0"+mapGrid.PlayerAStarArray[ax, ay].ToString() + ","; }
-                    else if (mapGrid.PlayerAStarArray[ax, ay].ToString().Length ==1)
-                    { stringArray += "00"+mapGrid.PlayerAStarArray[ax, ay].ToString() + ","; }
+                    if (mapGrid.PlayerAStarArray[ax, ay].ToString().Length == 2)
+                    { stringArray += "0" + mapGrid.PlayerAStarArray[ax, ay].ToString() + ","; }
+                    else if (mapGrid.PlayerAStarArray[ax, ay].ToString().Length == 1)
+                    { stringArray += "00" + mapGrid.PlayerAStarArray[ax, ay].ToString() + ","; }
                     else
                     { stringArray += mapGrid.PlayerAStarArray[ax, ay].ToString() + ","; }
                 }
                 stringArray += "\n";
             }
+
             spriteBatch.DrawString(font, stringArray , new Vector2(1100, 20), Color.Black);
 
             spriteBatch.DrawString(font, gameTime.TotalGameTime.ToString(), new Vector2(1000, 10), Color.Black);

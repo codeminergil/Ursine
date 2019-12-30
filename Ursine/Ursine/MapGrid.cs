@@ -8,6 +8,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
+    using System.Linq;
 
     public class MapGrid
     {
@@ -19,7 +20,11 @@
 
         public int[,] LocalArray { get; set; }
 
-        public MapGrid(int x, int y)
+        List<Terrain> OpenList  { get; set; }
+
+        List<Terrain> ClosedList { get; set; }
+
+    public MapGrid(int x, int y)
         {
             MapArray = new int[x, y];
             CandArray = new int[x, y];
@@ -34,10 +39,9 @@
                 {
                     int tt = t[x, y].PassCost;
                     MapArray[x, y] = t[x, y].PassCost;
-                    CandArray[x, y] = 0;
+                    CandArray[x, y] = 1;//ignore
                     if (t[x, y].PassCost == 999) { CandArray[x, y] = 1; }
                     PlayerAStarArray[x, y] = t[x, y].PassCost;
-
                 }
             }
 
@@ -45,126 +49,142 @@
 
         }
 
-        public void PlotAStar(int x, int y, int playerX, int playerY)
+        public void PlotAStar(int targX, int targY, int startX, int startY, Terrain[,] terArray)    //startX is where you click
         {
-            if (PlayerAStarArray[x, y] != 999)
+            GeometryFactory gf = new GeometryFactory();
+
+            if (PlayerAStarArray[targX, targY] != 999)
             {
-                PlayerAStarArray[x, y] = 888;
-                CandArray[x, y] = 1;
+                PlayerAStarArray[targX, targY] = 888;
             }
-            
 
-            PlayerAStarArray[playerX, playerY] = 888;
-            CandArray[playerX, playerY] = 999;
+            int iterationCount = 0;
+            int gTemp;
+            int hTemp;
+            Terrain targetCell = new Terrain();
+            targetCell.X = targX;
+            targetCell.Y = targY;
+                
+            Terrain startCell = terArray[startX, startY];
 
-            int lowVal = 0;
-            int breakVal = 0;
-            int prevLowVal = 999;
-            int currentX = x;
-            int currentY = y;
-            int iterationCount = 1;
+  //          foreach (Terrain t in terArray)  //pop heuristic values for whole map.
+  //          {
+  //              //g - cost of getting to that node from starting node.
+  //              //h - cost of getting to the goal node from current node. **
 
-            int XWeighting = 0;
-            int YWeighting = 0;
-            //Use CAndArray to loop through Astar Array until player is hit
-            //call a function to lad the terrain into these array a 99
+  //              if (t.Passable == true)
+  //              {
+  //                  t.g = CalcHeur(startCell, t);
+  //                  t.h = CalcHeur(t, targetCell);
+  //              }
 
-            while (CandArray[playerX, playerY] != 1)
+  //              if (t.Passable == false)
+  //              {
+  //                  //  t.g = 999;
+  //                  //  t.h = 999;
+  //                  continue;
+  //              }
+  ////                    PlayerAStarArray[t.X, t.Y] = (int)t.f;    //debug test 
+  //          }
+
+            PlayerAStarArray[startX, startY] = 888;
+            OpenList = new List<Terrain>();
+            ClosedList = new List<Terrain>();
+            Terrain currentCell = terArray[startX, startY];
+
+            OpenList.Add(currentCell);  //drop in start
+
+            while (OpenList.Count>0)
             {
-                //XWeighting = 0;
-                //YWeighting = 0;
+                currentCell = OpenList[0];
+                for(int i = 0; i < OpenList.Count(); i++)
+                {
+                    //CalcHeur(t.X, t.Y, targX, targY, out gTemp, out hTemp);
+                    //t.g = gTemp;
+                    //t.h = hTemp;
+                    if (OpenList[i].f < currentCell.f || (OpenList[i].f == currentCell.f && OpenList[i].h < currentCell.h))
+                    {
+                        currentCell = OpenList[i];  //cheapest F cost cell.
+                    }
+                }
 
-                //LocalArray[1, 1] = 999;
+                OpenList.Remove(currentCell);
+                ClosedList.Add(currentCell);
 
-                for (int xx = -1; xx <= 1; xx++) //loop around a single cell
+                if (currentCell.X == targX && currentCell.Y == targY)
+                {
+                    break;  //found the target cell
+                }
+                
+                for (int xx = -1; xx <= 1; xx++) //loop around a single perimiter cell
                 {
                     for (int yy = -1; yy <= 1; yy++)
                     {
-
-                        if ((xx + x) < CandArray.GetLength(0)
-                            && (xx + x) >= 0
-                            && (yy + y) < CandArray.GetLength(1)
-                            && (yy + y) >= 0
-                            && (PlayerAStarArray[xx+x, yy+y] != 999)
+                        if ((xx + currentCell.X) < PlayerAStarArray.GetLength(0)
+                            && (xx + currentCell.X) >= 0
+                            && (yy + currentCell.Y) < PlayerAStarArray.GetLength(1)
+                            && (yy + currentCell.Y) >= 0
+                            && !(xx == 0 && yy == 0) //not looking at centre square
                             )
                         {
-                            if (CandArray[xx + x, yy + y] == 0)
+                            if ((terArray[xx + currentCell.X, yy + currentCell.Y].Passable = false)
+                                || (PlayerAStarArray[xx + currentCell.X, yy + currentCell.Y] == 999)
+                                || (ClosedList.Contains(terArray[xx + currentCell.X, yy + currentCell.Y])))
                             {
-                                CandArray[xx + x, yy + y] = 1;
-                                PlayerAStarArray[xx + x, yy + y] = iterationCount + CalcHeur(playerX, playerY, xx + x, yy + y);
-                                LocalArray[1 + xx, 1 + yy] = CalcHeur(playerX, playerY, xx + x, yy + y); 
+                                continue;   //igonre this cell and jump to the next one                                
                             }
-                        }
-                    }
 
-                }
+                           int moveCostToPerimiter = (int)currentCell.g + CalcHeur(currentCell, terArray[xx + currentCell.X, yy + currentCell.Y]);
+
+                            if (moveCostToPerimiter < terArray[xx + currentCell.X, yy + currentCell.Y].g
+                                || !OpenList.Contains(terArray[xx + currentCell.X, yy + currentCell.Y]))
+                            {
+                                terArray[xx + currentCell.X, yy + currentCell.Y].g = moveCostToPerimiter;
+                                terArray[xx + currentCell.X, yy + currentCell.Y].h = CalcHeur(terArray[xx + currentCell.X, yy + currentCell.Y], targetCell/*, out gTemp, out hTemp*/);
+
+                                PlayerAStarArray[xx + currentCell.X, yy + currentCell.Y] = (int)terArray[xx + currentCell.X, yy + currentCell.Y].f;
+
+                                if (!OpenList.Contains(terArray[xx + currentCell.X, yy + currentCell.Y]))
+                                {
+                                    OpenList.Add(terArray[xx + currentCell.X, yy + currentCell.Y]);
+                                }
+                            }
+
+                        }   //if within array bouds
+                    } //yy
+                }//xx
                 iterationCount++;
-
-                lowVal = LocalArray[0, 0];
-                breakVal = LocalArray[1, 1];
-                for (int p = 0; p < 3; p++)
-                {
-                    for (int q = 0; q < 3; q++)
-                    {
-                        if (LocalArray[p, q] < lowVal 
-                            && !(p==1 && q ==1) 
-                            && LocalArray[p, q] != 999
-                            )
-                        {
-                            lowVal = LocalArray[p, q];
-                        }
-                    }
-                }
-
-                if (lowVal == prevLowVal)   //make sure youre not just vibrating
-                {
-                    break;
-                }
-
-                prevLowVal = lowVal;
-
-                if (LocalArray[0, 0] == lowVal) { XWeighting = -1; YWeighting = -1; }
-                if (LocalArray[1, 0] == lowVal) { XWeighting = 0; YWeighting = -1; }
-                if (LocalArray[2, 0] == lowVal) { XWeighting = +1; YWeighting = -1; }
-
-                if (LocalArray[0, 1] == lowVal) { XWeighting = -1; YWeighting = 0; }
-                if (LocalArray[2, 1] == lowVal) { XWeighting = +1; YWeighting = 0; }
-
-                if (LocalArray[0, 2] == lowVal) { XWeighting = -1; YWeighting = +1; }
-                if (LocalArray[1, 2] == lowVal) { XWeighting = 0; YWeighting = +1; }
-                if (LocalArray[2, 2] == lowVal) { XWeighting = +1; YWeighting = +1; }
-
-                if (breakVal == lowVal)
-                {
-                    break;            
-                }
-
-
-                //if (x < playerX) { XWeighting = +1; }  //heuristic direction to be headed in
-                //if (x > playerX) { XWeighting = -1; }
-
-                //if (y < playerY) { YWeighting = +1; }
-                //if (y > playerY) { YWeighting = -1; }
-
-
-                x += XWeighting;    //start looking in the heuristically right direction
-                y += YWeighting;
-
-                XWeighting = 0;
-                YWeighting = 0;
-
-                if (iterationCount > 50)
+                if (iterationCount > 100)
                 { break; }
-
-            }
-
-    
+            }//while
         }
 
-        public int CalcHeur(int px, int py, int gx, int gy)
+        public int CalcHeur(Terrain STerrain, Terrain TTerrain/*, out int G, out int H*/)
         {
-            return (int)(Math.Pow(Math.Abs(gx - px),2) + Math.Pow(Math.Abs(gy - py),2));
-           // return (int)(Math.Abs(gx - px) + Math.Abs(gy - py));
+            //return (int)(Math.Pow(Math.Abs(gx - sx),2) + Math.Pow(Math.Abs(gy - sy),2));
+            //F = G + H
+            //g - cost of getting to that node from starting node.
+            //h - cost of getting to the goal node from current node.
+
+
+           // H = Math.Abs(sx - tx) + Math.Abs(sy - ty);  //distance from goal
+
+            int dx = Math.Abs(STerrain.X - TTerrain.X);
+            int dy = Math.Abs(STerrain.Y - TTerrain.Y);
+
+            if (dx > dy)
+            {
+                /*G =*/return 14 * dy + (10 * (dx - dy));
+            }
+            else
+            {
+                /*G =*/return 14 * dx + (10 * (dy - dx));
+            }
+
+            //https://www.youtube.com/watch?v=mZfyt03LDH4&t=155s
+            //int F = G + H;
+
+          //  return F = G + H;
         }
     }
 }

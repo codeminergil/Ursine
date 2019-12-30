@@ -34,10 +34,10 @@ namespace Ursine
             TerArray = new Terrain[40,40];
 
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = MapPath;
+            string resourceName = MapPath;
             string result;
 
-           string[] t = assembly.GetManifestResourceNames();
+            string[] t = assembly.GetManifestResourceNames();
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
@@ -66,7 +66,7 @@ namespace Ursine
 
                     else if (TerrainMapGrid[x, y] == 2)
                     { ter = new Terrain(x, y, 0, TextureList[1], 100, 50, false, 999);
-                        TerArray[x, y] = new Terrain(x, y, 0, TextureList[1], 100, 50, true, 999);
+                        TerArray[x, y] = new Terrain(x, y, 0, TextureList[1], 100, 50, false, 999);
                     }
 
                     else if (TerrainMapGrid[x, y] == 3)

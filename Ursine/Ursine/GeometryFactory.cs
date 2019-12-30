@@ -35,5 +35,31 @@ namespace Ursine
             return new Vector2(carX, carY);
         }
 
+        public int Min(int[,] ar)
+        {
+            int min = ar[0, 0];
+            foreach (int value in ar)
+            {
+                if (value < min) min = value;
+            }
+            return min;
+        }
+
+        public int Min2Arrays(int[,] ar, int[,] car)
+        {
+            int min = 999;
+            for (int X = 0; X < ar.GetLength(0); X++)
+            {
+                for (int Y = 0; Y < ar.GetLength(1); Y++)
+                {
+                    if (ar[X, Y] < min && car[X,Y] == 0)
+                    {
+                        min = ar[X, Y];
+                    }
+
+                }
+            }
+            return min;
+        }
     }
 }
