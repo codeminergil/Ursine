@@ -63,31 +63,10 @@
             int iterationCount = 0;
             int gTemp;
             int hTemp;
-            // Terrain targetCell = new Terrain();
-            // targetCell.X = targX;
-            // targetCell.Y = targY;
+
             Terrain targetCell = terArray[targX, targY];
             Terrain startCell = terArray[startX, startY];
 
-  //          foreach (Terrain t in terArray)  //pop heuristic values for whole map.
-  //          {
-  //              //g - cost of getting to that node from starting node.
-  //              //h - cost of getting to the goal node from current node. **
-
-  //              if (t.Passable == true)
-  //              {
-  //                  t.g = CalcHeur(startCell, t);
-  //                  t.h = CalcHeur(t, targetCell);
-  //              }
-
-  //              if (t.Passable == false)
-  //              {
-  //                  //  t.g = 999;
-  //                  //  t.h = 999;
-  //                  continue;
-  //              }
-  ////                    PlayerAStarArray[t.X, t.Y] = (int)t.f;    //debug test 
-  //          }
 
             PlayerAStarArray[startX, startY] = 888;
             OpenList = new List<Terrain>();
@@ -163,7 +142,7 @@
                     } //yy
                 }//xx
                 iterationCount++;
-                if (iterationCount > 100)
+                if (iterationCount > 1000)
                 { break; }
             }//while
         }

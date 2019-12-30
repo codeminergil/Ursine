@@ -59,8 +59,8 @@ namespace Ursine
             TextureList = textureLoader.InitialiseTextures(Content);//loads map textures
             map = new MapReader("Ursine.Resources.testMap2.txt");
             map.PlotMap(TextureList);
-            scrollX = 0;
             scrollY = 0;
+            scrollX = 0;
             mapPosition = new Vector2(0, 0);
             ballSpeed = 150f;
 
@@ -70,7 +70,6 @@ namespace Ursine
 
             mapGrid = new MapGrid(40, 40);
             mapGrid.ClearGrid(map.TerArray);
-
             mapGrid.PlotAStar(7, 0, 7, 0, map.TerArray);
 
             base.Initialize();
@@ -129,7 +128,10 @@ namespace Ursine
 
             var mousestate = Mouse.GetState();
 
-            Cords = new Vector2(mousestate.X /*+ scrollX*/, mousestate.Y/* + scrollY*/);
+            //Cart2Iso((map.TerArray[x, y].X * map.TerArray[x, y].Height) - (scrollX + scrollY),
+            //    (map.TerArray[x, y].Y * map.TerArray[x, y].Height) - (scrollY - scrollX))
+
+            Cords = new Vector2(mousestate.X + scrollX, mousestate.Y + scrollY);
             CordsStringIso = (Cords.X).ToString() + "," + (Cords.Y).ToString();
 
             CordsStringCart = System.Math.Round(g.Iso2Cart(Cords.X, Cords.Y).X).ToString()
@@ -140,30 +142,35 @@ namespace Ursine
                                 + "," +
                                 System.Math.Round(targCart.Y).ToString();
 
-            //if (kstate.IsKeyDown(Keys.W) || (mousestate.Y < 40 && mousestate.Y >= 0))
-            //    scrollY -=3;
+            if (kstate.IsKeyDown(Keys.W) || (mousestate.Y < 40 && mousestate.Y >= 0))
+                scrollY -=5;
 
-            //if (kstate.IsKeyDown(Keys.S) || mousestate.Y > GraphicsDevice.DisplayMode.Height -40)
-            //    scrollY+=3;
+            if (kstate.IsKeyDown(Keys.S) || mousestate.Y > GraphicsDevice.DisplayMode.Height -40)
+                scrollY+=5;
 
-            //if (kstate.IsKeyDown(Keys.A) || (mousestate.X < 40 && mousestate.X >= 0)) 
-            //    scrollX-=3;
+            if (kstate.IsKeyDown(Keys.A) || (mousestate.X < 40 && mousestate.X >= 0)) 
+                scrollX-=5;
 
-            //if (kstate.IsKeyDown(Keys.D) || mousestate.X > GraphicsDevice.DisplayMode.Width -40)
-            //    scrollX+=3;
+            if (kstate.IsKeyDown(Keys.D) || mousestate.X > GraphicsDevice.DisplayMode.Width -40)
+                scrollX+=5;
 
             if (mousestate.LeftButton == ButtonState.Pressed)
             {
                 mousePos = new Vector2(mousestate.X + scrollX, mousestate.Y + scrollY);
                 targCart = g.Iso2Cart((float)System.Math.Round(mousePos.X) , (float)System.Math.Round(mousePos.Y) );
-                //   mapGrid.MapArray[(int)targCart.X/100, (int)targCart.Y/100] = 1;
                 targIso = mousePos;
-                //mapGrid.PlayerAStarArray[(int)targCart.X, (int)targCart.Y] = 0;
+
+                //prevent clicking into the void
+                if (targCart.X < 0) { targCart.X = 0; targIso.X = g.Cart2Iso((float)System.Math.Round(targCart.X), (float)System.Math.Round(targCart.Y)).X; }
+                if (targCart.Y < 0) { targCart.Y = 0; targIso.Y = g.Cart2Iso((float)System.Math.Round(targCart.X), (float)System.Math.Round(targCart.Y)).Y; }
+                if (targCart.X > 39) { targCart.X = 39; targIso.X = g.Cart2Iso((float)System.Math.Round(targCart.X), (float)System.Math.Round(targCart.Y)).X; }
+                if (targCart.Y > 19) { targCart.Y = 19; targIso.Y = g.Cart2Iso((float)System.Math.Round(targCart.X), (float)System.Math.Round(targCart.Y)).Y; }
+                
                 mapGrid.ClearGrid(map.TerArray);
                 mapGrid.PlotAStar(7, 0, (int)targCart.X, (int)targCart.Y, map.TerArray);    //pass player later
             }
 
-            if (/*ballPosition.X/100*/ player.IsoCord.X< targIso.X)
+            if (player.IsoCord.X< targIso.X)
             {
                 player.IsoCord = new Vector2(player.IsoCord.X + ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds, player.IsoCord.Y);
             }
@@ -217,8 +224,12 @@ namespace Ursine
                 for (int y = 0; y < map.TerArray.GetLength(1); y++)
                 {
 
-                    spriteBatch.DrawString(font, map.TerArray[x,y].X.ToString() + "," + map.TerArray[x, y].Y.ToString(), g.Cart2Iso(map.TerArray[x, y].X * map.TerArray[x, y].Height, map.TerArray[x, y].Y * map.TerArray[x, y].Height), Color.Black);
-
+                    spriteBatch.DrawString(
+                                    font, 
+                                    map.TerArray[x,y].X.ToString() + "," + map.TerArray[x, y].Y.ToString(),
+                                    g.Cart2Iso((map.TerArray[x, y].X * map.TerArray[x, y].Height) - (scrollX + scrollY), (map.TerArray[x, y].Y * map.TerArray[x, y].Height) - (scrollY - scrollX)),
+                                    Color.Black);
+                    //MAp
                     spriteBatch.Draw(
                             map.TerArray[x, y].Texture,
                             g.Cart2Iso((map.TerArray[x, y].X * map.TerArray[x, y].Height) - (scrollX + scrollY), (map.TerArray[x, y].Y * map.TerArray[x, y].Height) - (scrollY - scrollX)),
@@ -231,13 +242,13 @@ namespace Ursine
 
             spriteBatch.Draw(
                cursorTexture,
-             new Vector2(cursVector.X*50-50, cursVector.Y*50-25),
+             new Vector2((cursVector.X*50-50) /*+scrollX*/, (cursVector.Y*50-25) /*+scrollY*/ ),
             Color.White
                );
 
             spriteBatch.Draw(
                     ballTexture,
-                    new Vector2(player.IsoCord.X - scrollX, player.IsoCord.Y -scrollY),
+                    new Vector2(player.IsoCord.X + scrollX, player.IsoCord.Y +scrollY),
                     null,
                     Color.White,
                     0f,
@@ -246,12 +257,12 @@ namespace Ursine
                     SpriteEffects.None,
                     0f
                     );
-
-            //spriteBatch.DrawString(font, "Cords Iso:" + CordsStringIso, new Vector2(1000, 100), Color.Black);
-            //spriteBatch.DrawString(font, "Cords Click:" + CordsStringClick, new Vector2(1000, 150), Color.Black);
-            //spriteBatch.DrawString(font, "Cords Cart:" + CordsStringCart, new Vector2(1000, 200), Color.Black);
-            //spriteBatch.DrawString(font, "scrollx:" + scrollX, new Vector2(1000, 250), Color.Black);
-            //spriteBatch.DrawString(font, "scrolly:" + scrollY, new Vector2(1000, 300), Color.Black);
+            //debug BS below
+            spriteBatch.DrawString(font, "Cords Iso:" + CordsStringIso, new Vector2(1000, 100), Color.Black);
+            spriteBatch.DrawString(font, "Cords Click:" + CordsStringClick, new Vector2(1000, 150), Color.Black);
+            spriteBatch.DrawString(font, "Cords Cart:" + CordsStringCart, new Vector2(1000, 200), Color.Black);
+            spriteBatch.DrawString(font, "scrollx:" + scrollX, new Vector2(1000, 250), Color.Black);
+            spriteBatch.DrawString(font, "scrolly:" + scrollY, new Vector2(1000, 300), Color.Black);
 
             spriteBatch.DrawString(font, "Array:" , new Vector2(1100, 10), Color.Black);
             string stringArray ="";
