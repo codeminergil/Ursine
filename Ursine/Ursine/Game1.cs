@@ -272,7 +272,13 @@ namespace Ursine
             spriteBatch.DrawString(font, stringArray , new Vector2(1100, 20), Color.Black);
 
             spriteBatch.DrawString(font, gameTime.TotalGameTime.ToString(), new Vector2(1000, 10), Color.Black);
-
+            int v = 0;
+            foreach(Terrain t in mapGrid.Path)
+            {
+                spriteBatch.DrawString(font, t.X+","+t.Y, new Vector2(900, 20+v), Color.Black);
+                v+= 14;
+            }
+            v = 0;
             spriteBatch.End();
 
             base.Draw(gameTime);

@@ -19,5 +19,7 @@ namespace Ursine
         public float f { get { return g + h; } }
         public float g { get; set; }
         public float h { get; set; }
+
+        public Terrain Parent { get; set; }
     }
 }

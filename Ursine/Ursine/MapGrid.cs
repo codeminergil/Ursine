@@ -24,7 +24,9 @@
 
         List<Terrain> ClosedList { get; set; }
 
-    public MapGrid(int x, int y)
+        public List<Terrain> Path { get; set; }
+
+        public MapGrid(int x, int y)
         {
             MapArray = new int[x, y];
             CandArray = new int[x, y];
@@ -61,10 +63,10 @@
             int iterationCount = 0;
             int gTemp;
             int hTemp;
-            Terrain targetCell = new Terrain();
-            targetCell.X = targX;
-            targetCell.Y = targY;
-                
+            // Terrain targetCell = new Terrain();
+            // targetCell.X = targX;
+            // targetCell.Y = targY;
+            Terrain targetCell = terArray[targX, targY];
             Terrain startCell = terArray[startX, startY];
 
   //          foreach (Terrain t in terArray)  //pop heuristic values for whole map.
@@ -113,7 +115,8 @@
 
                 if (currentCell.X == targX && currentCell.Y == targY)
                 {
-                    break;  //found the target cell
+                    RetracePath(startCell, targetCell);
+                    return;  //found the target cell
                 }
                 
                 for (int xx = -1; xx <= 1; xx++) //loop around a single perimiter cell
@@ -134,7 +137,11 @@
                                 continue;   //igonre this cell and jump to the next one                                
                             }
 
-                           int moveCostToPerimiter = (int)currentCell.g + CalcHeur(currentCell, terArray[xx + currentCell.X, yy + currentCell.Y]);
+
+                            //g - cost of getting to that node from starting node.
+                            //h - cost of getting to the goal node from current node. **
+
+                            int moveCostToPerimiter = (int)currentCell.g + CalcHeur(currentCell, terArray[xx + currentCell.X, yy + currentCell.Y]);
 
                             if (moveCostToPerimiter < terArray[xx + currentCell.X, yy + currentCell.Y].g
                                 || !OpenList.Contains(terArray[xx + currentCell.X, yy + currentCell.Y]))
@@ -143,6 +150,8 @@
                                 terArray[xx + currentCell.X, yy + currentCell.Y].h = CalcHeur(terArray[xx + currentCell.X, yy + currentCell.Y], targetCell/*, out gTemp, out hTemp*/);
 
                                 PlayerAStarArray[xx + currentCell.X, yy + currentCell.Y] = (int)terArray[xx + currentCell.X, yy + currentCell.Y].f;
+
+                                terArray[xx + currentCell.X, yy + currentCell.Y].Parent = currentCell;
 
                                 if (!OpenList.Contains(terArray[xx + currentCell.X, yy + currentCell.Y]))
                                 {
@@ -186,5 +195,22 @@
 
           //  return F = G + H;
         }
+
+        void RetracePath(Terrain startCell, Terrain endCell)
+        {
+            List<Terrain> path = new List<Terrain>();
+            Terrain currentCell = endCell;
+
+            while (currentCell != startCell)
+            {
+                path.Add(currentCell);
+                currentCell = currentCell.Parent;
+            }
+            path.Reverse();
+
+            Path = path;
+
+        }
+
     }
 }
